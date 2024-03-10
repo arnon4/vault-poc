@@ -14,7 +14,7 @@ helm repo add hashicorp https://helm.releases.hashicorp.com
 helm repo add secrets-store-csi-driver https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
 helm repo update
 
-# Install vault in dev mode with CSI enabled but injector disabled
+# Install vault in dev mode with CSI enabled but injector disabled (parameters can be passed in values.yaml)
 helm install vault hashicorp/vault \
     --set "server.dev.enabled=true" \
     --set "injector.enabled=false" \
@@ -70,3 +70,10 @@ helm install webapp vault-poc-0.1.0.tgz
 # Verify the secret is readable:
 k exec $(k get po | grep webapp | cut -d' ' -f1) -- env | grep DB
 ```
+
+## Additional
+
+By default, Vault does not expose a UI. The recommended way to get one is on a requirement basis:
+`kubectl port-forward vault-0 8200:8200`.
+
+Vault in dev mode does not have persistency, however in standalone mode it does. See [docs](https://developer.hashicorp.com/vault/docs/platform/k8s/helm/run#standalone-mode).
