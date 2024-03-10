@@ -1,0 +1,20 @@
+replicaCount: 1
+application:
+  name: webapp
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+secretProviderClass:
+  # must match name used when creating role in Vault
+  roleName:
+
+# Settings for Vault secrets. Path will be /secret/data/<secretPath> (matches secrets created in secret/<secretPath>).
+# objectName is the key in the Kubernetes Secret name, the key inside Kubernetes Secret, and the environment variable name (in all caps).
+objects: []
+# - objectName: "key1"
+#   secretPath: "key1"
+# - objectName: "key2"
+#   secretPath: "key2"

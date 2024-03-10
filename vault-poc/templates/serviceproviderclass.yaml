@@ -1,0 +1,25 @@
+# A SecretProviderClass that uses secret syncing to create Secret objects from Vault secrets.
+# See https://secrets-store-csi-driver.sigs.k8s.io/topics/sync-as-kubernetes-secret.html
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: {{ printf "%s-spc" .Values.application.name }}
+spec:
+  provider: vault
+  secretObjects:
+  {{- range .Values.objects }}
+  - data:
+    - key: {{ .objectName }}
+      objectName: {{ .objectName }}
+    secretName: {{ .objectName }}
+    type: Opaque
+  {{- end }}
+  parameters:
+    vaultAddress: "http://vault.default.svc:8200"
+    roleName: {{ .Values.secretProviderClass.roleName | quote }}
+    objects: |
+      {{- range .Values.objects }}
+      - objectName: {{ .objectName }}
+        secretPath: "secret/data/{{ .secretPath }}"
+        secretKey: {{ .objectName }}
+      {{- end }}
