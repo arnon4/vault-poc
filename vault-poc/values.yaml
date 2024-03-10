@@ -1,0 +1,35 @@
+replicaCount: 1
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+
+application:
+  name: webapp
+
+secrets:
+  - name: dbpass
+    key: password
+    objectName: db-password
+
+secretProviderClass:
+  name: vault-database
+  roleName: "database"
+  objects:
+    - objectName: "db-password"
+      secretPath: "secret/data/db-pass"
+      secretKey: "password"
+
+volumes: 
+- name: secrets-store-inline
+  csi:
+    driver: secrets-store.csi.k8s.io
+    readOnly: true
+    volumeAttributes:
+      secretProviderClass: vault-database
